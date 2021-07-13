@@ -4,6 +4,11 @@ from src.interfaces.contact import Contact
 
 class ContactServices:
     @staticmethod
+    async def setup():
+        await ContactModel.setup()
+        print("create table contact")
+
+    @staticmethod
     def save(contact: Contact):
         return ContactModel.save(contact)
 

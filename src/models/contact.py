@@ -1,4 +1,5 @@
 from src.interfaces.contact import Contact
+from src.loaders.db import database
 
 contacts = [
     {
@@ -15,6 +16,11 @@ contacts = [
 
 
 class ContactModel:
+    @staticmethod
+    async def setup():
+        query = """CREATE TABLE IF NOT EXISTS contact.contact (id INTEGER PRIMARY KEY, name VARCHAR(100), cellphone VARCHAR(10))"""
+        await database.execute(query=query)
+
     @staticmethod
     def save(contact: Contact):
         contacts.append(contact)
