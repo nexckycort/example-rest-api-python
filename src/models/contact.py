@@ -1,49 +1,45 @@
 from src.interfaces.contact import Contact
 from src.loaders.db import database
 
-contacts = [
-    {
-        'id': 1,
-        'name': 'Nestor',
-        'cellphone': '3022341426'
-    },
-    {
-        'id': 2,
-        'name': 'Juanito',
-        'cellphone': '3023348482'
-    }
-]
-
 
 class ContactModel:
     @staticmethod
     async def setup():
-        query = """CREATE TABLE IF NOT EXISTS contact.contact (id INTEGER PRIMARY KEY, name VARCHAR(100), cellphone VARCHAR(10))"""
+        query = """CREATE TABLE IF NOT EXISTS contact.contact (id serial PRIMARY KEY, name VARCHAR(100), cellphone VARCHAR(10))"""
         await database.execute(query=query)
 
     @staticmethod
-    def save(contact: Contact):
-        contacts.append(contact)
-        return contact
+    async def save(contact: Contact):
+        query = "INSERT INTO contact.contact(name, cellphone) VALUES (:name, :cellphone)"
+        values = [
+            {"name": contact.name, "cellphone": contact.cellphone}
+        ]
+        await database.execute_many(query=query, values=values)
+        return {"message": "contact created"}
 
     @staticmethod
-    def findAll():
-        return contacts
+    async def findAll():
+        query = "SELECT * FROM contact.contact"
+        contactsRecord = await database.fetch_all(query=query)
+        return {
+            "message": "downloaded contacts",
+            "data": contactsRecord
+        }
 
     @staticmethod
-    def findOne(id):
-        contactsFound = [
-            contact for contact in contacts if contact['id'] == id]
-        if (len(contactsFound) > 0):
-            return contactsFound[0]
-        return null
+    async def findOne(id):
+        query = "SELECT * FROM contact.contact WHERE id = :id"
+        contactRecord = await database.fetch_one(query=query, values={"id": id})
+        return {
+            "message": "contact downloaded",
+            "data": contactsRecord
+        }
 
     @staticmethod
-    def update(id: int, contact: Contact):
-        contactsFound = [
-            contact for contact in contacts if contact['id'] == id]
-        if (len(contactsFound) > 0):
-            contactsFound[0]['name'] = contact.name
-            contactsFound[0]['cellphone'] = contact.cellphone
-            return contactsFound[0]
-        return null
+    async def update(id: int, contact: Contact):
+        query = "UPDATE contact.contact SET name = :name, cellphone = :cellphone WHERE id=1"
+        values = [
+            {"name": contact.name, "cellphone": contact.cellphone}
+        ]
+        await database.execute_many(query=query, values=values)
+        return {"message": "updated contact"}

@@ -9,17 +9,17 @@ class ContactServices:
         print("create table contact")
 
     @staticmethod
-    def save(contact: Contact):
-        return ContactModel.save(contact)
+    async def save(contact: Contact):
+        return await ContactModel.save(contact)
 
     @staticmethod
-    def findAll():
-        return ContactModel.findAll()
+    async def findAll():
+        return await ContactModel.findAll()
 
     @staticmethod
-    def findOne(id):
-        return ContactModel.findOne(id)
+    async def findOne(id):
+        return await ContactModel.findOne(id)
 
     @staticmethod
-    def update(id: int, contact: Contact):
-        return ContactModel.update(id, contact)
+    async def update(id: int, contact: Contact):
+        return await ContactModel.update(id, contact)
